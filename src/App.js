@@ -1,27 +1,40 @@
 import './App.css';
 import { useQuery, gql } from '@apollo/client';
-import { GET_PRODUCTS, GET_ATTRIBUTES } from './queryes';
+import { GET_PRODUCTS, GET_ATTRIBUTES, GET_NAVIGATION } from './queryes';
+import React, { useState } from 'react';
+import Products from './Products';
 
 const App = (props) => {
-  const { loading, data } = useQuery(GET_ATTRIBUTES);
-  console.log('data: ', data);
+  const [currentId, setCurrentId] = useState('');
+  const onClickHandler = (id) => {
+    setCurrentId(id)
+  };
 
-  return <h1>sfadfadf</h1>
+  const { loading, data } = useQuery(GET_NAVIGATION);
 
-  // return loading ? (
-  //   <h1>Loading</h1>
-  // ) : (
-  //   <ul>
-  //     {data.products.edges.map((item) => {
-  //       return (
-  //         <li key={item.node.id}>
-  //           <p>{item.node.name}</p>
-  //           <img alt={item.node.thumbnail.alt} src={item.node.thumbnail.url} />
-  //         </li>
-  //       );
-  //     })}
-  //   </ul>
-  // );
+  if (loading) return <h1>Loading</h1>;
+
+  const {
+    shop: {
+      navigation: {
+        main: { items },
+      },
+    },
+  } = data;
+
+  return (
+    <>
+      <ul>
+        {items.map((item) => (
+          <li onClick={() => onClickHandler(item.category.id)} key={item.category.id}>
+            <p>{item.category.name}</p>
+            <p>{item.category.id}</p>
+          </li>
+        ))}
+      </ul>
+      <Products id={currentId} />
+    </>
+  );
 };
 
 const FETCH_DATA = gql`

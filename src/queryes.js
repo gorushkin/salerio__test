@@ -1,5 +1,23 @@
 import { useQuery, gql } from '@apollo/client';
 
+export const GET_NAVIGATION = gql`
+query {
+  shop {
+    navigation {
+      main {
+        items {
+          name
+          category {
+            id
+            name
+          }
+        }
+      }
+    }
+  }
+}
+`;
+
 export const GET_PRODUCTS = gql`
   {
     products(first: 10, filter: { attributes: { slug: "bucket-size", value: "25l" } }) {
